@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 
-import { ToastMessage, Toaster, ToastType } from "@/components/common/toaster";
+import { ToastMessage, Toaster, ToastType } from "@/components/ui/toaster";
 
 type ToastContextValue = {
   showToast: (message: string, type?: ToastType) => void;
@@ -20,7 +20,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const showToast = useCallback(
     (message: string, type: ToastType = "info") => {
       const id = crypto.randomUUID();
-      setToasts((current) => [...current, { id, type, message }]);
+      setToasts((current) => [...current, { id, type, title: message }]);
       setTimeout(() => removeToast(id), 3200);
     },
     [removeToast]

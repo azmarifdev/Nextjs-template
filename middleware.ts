@@ -5,13 +5,13 @@ const AUTH_COOKIE_NAME = "auth_token";
 export function middleware(request: NextRequest) {
   const isAuthenticated = Boolean(request.cookies.get(AUTH_COOKIE_NAME)?.value);
 
-  if (!isAuthenticated) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+  if (isAuthenticated) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("next", request.nextUrl.pathname);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {

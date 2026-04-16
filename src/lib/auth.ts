@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { createHmac } from "node:crypto";
 
-import { getDb } from "@/lib/db";
 import { env } from "@/lib/env";
 
 export type AuthUser = {
@@ -55,7 +54,6 @@ function sign(value: string): string {
   return createHmac("sha256", env.sessionSecret).update(value).digest("base64url");
 }
 
-// Generate a signed, short-lived session token stored in an httpOnly cookie.
 export function createSessionToken(user: SessionUser): string {
   const payload: SessionPayload = {
     ...user,
@@ -98,16 +96,9 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   return verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 }
 
-// Lookup demo users in memory, or MongoDB when configured.
 export async function findUserByEmail(email: string): Promise<AuthUser | null> {
   const normalizedEmail = email.toLowerCase();
-  const db = await getDb();
-
-  if (!db) {
-    return localUsers.find((user) => user.email === normalizedEmail) ?? null;
-  }
-
-  return db.collection<AuthUser>("auth_users").findOne({ email: normalizedEmail });
+  return localUsers.find((user) => user.email === normalizedEmail) ?? null;
 }
 
 export async function createUser(input: {
@@ -130,13 +121,6 @@ export async function createUser(input: {
     role: "user"
   };
 
-  const db = await getDb();
-
-  if (!db) {
-    localUsers = [created, ...localUsers];
-    return created;
-  }
-
-  await db.collection<AuthUser>("auth_users").insertOne(created);
+  localUsers = [created, ...localUsers];
   return created;
 }

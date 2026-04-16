@@ -1,16 +1,20 @@
 "use client";
 
-import { InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
 };
 
-export function Input({ className = "", error, ...props }: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className = "", error, ...props },
+  ref
+) {
   const borderColor = error ? "#ef4444" : "var(--border)";
 
   return (
     <input
+      ref={ref}
       {...props}
       className={`input ${className}`.trim()}
       style={{ borderColor }}
@@ -18,4 +22,4 @@ export function Input({ className = "", error, ...props }: InputProps) {
       aria-describedby={error ? `${props.name || props.id || "field"}-error` : undefined}
     />
   );
-}
+});

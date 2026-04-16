@@ -2,29 +2,17 @@
 
 import { useMemo, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { demoUsers } from "@/modules/demo/sample-data";
+import { filterUsers, getUserStats } from "@/modules/user/service";
 
 export function UserList() {
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
-  const filteredUsers = useMemo(() => {
-    return demoUsers.filter((user) => {
-      const matchQuery = [user.name, user.email].join(" ").toLowerCase().includes(query.toLowerCase());
-      const matchRole = roleFilter === "all" ? true : user.role === roleFilter;
-      return matchQuery && matchRole;
-    });
-  }, [query, roleFilter]);
-
-  const stats = useMemo(() => {
-    return {
-      total: demoUsers.length,
-      admins: demoUsers.filter((user) => user.role === "admin").length,
-      regular: demoUsers.filter((user) => user.role === "user").length,
-      showing: filteredUsers.length
-    };
-  }, [filteredUsers]);
-
+  const filteredUsers = useMemo(() => filterUsers(demoUsers, query, roleFilter), [query, roleFilter]);
+  const stats = useMemo(() => getUserStats(demoUsers, filteredUsers.length), [filteredUsers.length]);
   const hasFilters = query.trim().length > 0 || roleFilter !== "all";
 
   return (
@@ -54,12 +42,7 @@ export function UserList() {
       </div>
 
       <div className="toolbar sm:grid-cols-2">
-        <input
-          className="input"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search by name or email"
-        />
+        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name or email" />
         <select className="input" value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)}>
           <option value="all">All roles</option>
           <option value="admin">Admin</option>
@@ -69,7 +52,7 @@ export function UserList() {
 
       {filteredUsers.length === 0 ? (
         <div className="list-row stack" style={{ textAlign: "center" }}>
-          <strong>No users found</strong>
+          <strong>No data yet</strong>
           <p className="muted">Try changing your search or role filter.</p>
           {hasFilters ? (
             <button type="button" className="btn secondary" onClick={() => { setQuery(""); setRoleFilter("all"); }}>
@@ -85,7 +68,7 @@ export function UserList() {
                 <p className="font-semibold">{user.name}</p>
                 <p className="muted text-sm">{user.email}</p>
               </div>
-              <span className="badge w-fit">{user.role}</span>
+              <Badge className="w-fit">{user.role}</Badge>
             </li>
           ))}
         </ul>

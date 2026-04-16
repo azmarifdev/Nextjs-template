@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { DemoBanner } from "@/components/common/demo-banner";
+import { DemoBanner } from "@/components/shared/demo-banner";
 import { getSessionUser } from "@/lib/auth";
 import { demoProjects, demoTasks, demoUsers } from "@/modules/demo/sample-data";
 

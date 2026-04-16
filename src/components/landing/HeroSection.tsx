@@ -1,10 +1,6 @@
 import Link from "next/link";
 
-type HeroSectionProps = {
-  isLoggedIn: boolean;
-};
-
-export function HeroSection({ isLoggedIn }: HeroSectionProps) {
+export function HeroSection() {
   return (
     <section className="relative overflow-hidden px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,var(--hero-glow),_transparent_55%)]" />
@@ -30,21 +26,9 @@ export function HeroSection({ isLoggedIn }: HeroSectionProps) {
           <Link href="/register" className="btn rounded-xl px-5 py-3 text-sm font-semibold text-black no-underline">
             Get Started
           </Link>
-          {isLoggedIn ? (
-            <Link href="/dashboard" className="btn secondary rounded-xl px-5 py-3 text-sm font-semibold no-underline">
-              Go to Dashboard
-            </Link>
-          ) : (
-            <Link href="/login" className="btn secondary rounded-xl px-5 py-3 text-sm font-semibold no-underline">
-              Login to Demo
-            </Link>
-          )}
-        </div>
-
-        <div className="mt-6 w-full max-w-xl rounded-xl border px-4 py-3 text-sm" style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--text)" }}>
-          <p className="font-semibold">Demo credentials</p>
-          <p className="mt-1 muted">Admin: admin@example.com / admin123</p>
-          <p className="muted">User: user@example.com / user123</p>
+          <Link href="/dashboard" className="btn secondary rounded-xl px-5 py-3 text-sm font-semibold no-underline">
+            Go to Dashboard
+          </Link>
         </div>
       </div>
     </section>

@@ -3,20 +3,11 @@ import { DeveloperExperienceSection } from "@/components/landing/DeveloperExperi
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { FooterSection } from "@/components/landing/FooterSection";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { DemoBanner } from "@/components/shared/demo-banner";
-import { getSessionUser } from "@/lib/auth";
 
-export default async function HomePage() {
-  const session = await getSessionUser();
-
+export default function HomePage() {
   return (
     <div className="overflow-hidden" style={{ color: "var(--text)" }}>
-      <HeroSection isLoggedIn={Boolean(session)} />
-
-      <section className="content-shell" style={{ paddingTop: 0 }}>
-        <DemoBanner />
-      </section>
-
+      <HeroSection />
       <FeaturesSection />
       <DemoPreviewSection />
       <DeveloperExperienceSection />

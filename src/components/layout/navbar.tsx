@@ -20,6 +20,11 @@ const privateNavLinks = [
   { href: "/users", label: "Users" }
 ] as const;
 
+const publicNavLinks = [
+  { href: "/", label: "Home" },
+  { href: "/#features", label: "Features" }
+] as const;
+
 function isActiveLink(pathname: string, href: string): boolean {
   if (href === "/") {
     return pathname === "/";
@@ -37,47 +42,30 @@ export function Navbar({ session }: NavbarProps) {
       style={{ borderColor: "var(--border)", background: "var(--header-bg)" }}
     >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 font-semibold no-underline" style={{ color: "var(--text)" }}>
             <Image src="/assets/nextjs-mark.svg" alt="Next.js Starter-Kit logo" width={28} height={28} />
             <span className="hidden text-sm tracking-tight sm:inline">{env.appName}</span>
           </Link>
-          <Link
-            href="/"
-            className={`nav-link ${isActiveLink(pathname, "/") ? "active" : ""}`.trim()}
-            aria-current={isActiveLink(pathname, "/") ? "page" : undefined}
-          >
-            Home
-          </Link>
         </div>
 
-        {session ? (
-          <nav className="nav-group hidden md:flex" aria-label="Main navigation">
-            {privateNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`nav-link ${isActiveLink(pathname, link.href) ? "active" : ""}`.trim()}
-                aria-current={isActiveLink(pathname, link.href) ? "page" : undefined}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        ) : (
-          <div />
-        )}
+        <nav className="nav-group flex" aria-label="Main navigation">
+          {(session ? privateNavLinks : publicNavLinks).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`nav-link ${isActiveLink(pathname, link.href) ? "active" : ""}`.trim()}
+              aria-current={isActiveLink(pathname, link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
 
         <div className="flex items-center gap-2">
           {session ? (
             <>
               <ThemeToggle />
-              <Link
-                href="/dashboard"
-                className={`btn secondary px-3 py-2 text-sm font-semibold no-underline ${isActiveLink(pathname, "/dashboard") ? "ring-1" : ""}`.trim()}
-              >
-                Dashboard
-              </Link>
               <LogoutButton />
             </>
           ) : (
@@ -92,21 +80,6 @@ export function Navbar({ session }: NavbarProps) {
           )}
         </div>
       </div>
-
-      {session ? (
-        <nav className="nav-group-mobile md:hidden" aria-label="Mobile navigation">
-          {privateNavLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`nav-link ${isActiveLink(pathname, link.href) ? "active" : ""}`.trim()}
-              aria-current={isActiveLink(pathname, link.href) ? "page" : undefined}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
     </header>
   );
 }

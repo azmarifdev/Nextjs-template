@@ -1,89 +1,81 @@
-# Next.js Starter Kit – Clean, Minimal, Production-Ready Boilerplate
+# Next.js Starter Kit
 
-A polished Next.js starter kit focused on practical defaults, clean architecture, and a great developer experience for real projects.
+Clean and minimal Next.js starter for building production-ready apps.
 
 ![Starter Banner](public/assets/banner.png)
 
 ## Features
 
-- Authentication system (login, register, session, logout)
-- Protected app area (Dashboard, Projects, Tasks, Users)
-- API routes with consistent success/error response shape
-- Modern UI components and polished page states
-- Built-in demo support with ready-to-use credentials
-- Middleware auth guard for private routes
-- Reusable modules + services structure
+- Auth system (login/register)
+- Dashboard
+- Projects / Tasks / Users
+- API routes (v1)
+- Clean UI (shadcn-based)
+- Empty state
+- Toast system
+- SEO (robots + sitemap)
 
 ## Screenshots
 
-### Dashboard
-
-![Dashboard Screenshot](public/assets/dashboard-screenshot.png)
-
-### Login
-
-![Login Screenshot](public/assets/login-screenshot.png)
+![Dashboard](public/assets/dashboard-screenshot.png)
+![Login](public/assets/login-screenshot.png)
+![Banner](public/assets/banner.png)
 
 ## Quick Start
 
-1. Clone the repository
+1. Clone the repo
 
 ```bash
 git clone <your-repo-url>
 cd Next.js-Starter-Kit
 ```
 
-2. Install dependencies
+2. Use Node.js 22+
+
+```bash
+node -v
+```
+
+3. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-3. Set up environment files
+4. Set up environment
 
 ```bash
 pnpm setup
 ```
 
-4. Run development server
+5. Run the app
 
 ```bash
 pnpm dev
 ```
 
-5. Open the app
-
-- http://localhost:3000
+6. Open `http://localhost:3000`
 
 ## Demo Credentials
 
-- Admin: `admin@example.com` / `admin123`
-- User: `user@example.com` / `user123`
+Email: [demo@starter.com](mailto:demo@starter.com)  
+Password: 123456
 
-## Folder Structure (Brief)
+## Folder Structure
 
 ```text
 src/
-  app/                 # Routes and API endpoints
-  components/
-    layout/            # Layout pieces (navbar)
-    landing/           # Landing page sections
-    shared/            # Reusable app components
-    ui/                # Base UI components
-  modules/             # Feature modules + services
-  services/            # API client
-  lib/                 # Auth, env, error utilities
-  styles/              # Global styles
+  app/              routes and API endpoints
+  components/       UI and layout components
+  modules/          feature modules
+  services/         API client
+  lib/              auth, env, and helpers
+  styles/           global styles
 ```
-
-## Who Is This For?
-
-- Beginners who want a clean, understandable Next.js foundation
-- Developers who need a fast, production-like starting point
-- Teams that value readability and consistent project structure
 
 ## Author
 
 - A. Z. M. Arif
+- Brand: azmarifdev
 - Website: https://azmarif.dev
 - GitHub: https://github.com/azmarifdev

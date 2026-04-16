@@ -1,13 +1,16 @@
-import { HTMLAttributes, ReactNode } from "react";
+import { HTMLAttributes, ReactNode, forwardRef } from "react";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
 };
 
-export function Card({ children, className = "", ...props }: CardProps) {
+export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
+  { children, className = "", ...props },
+  ref
+) {
   return (
-    <div {...props} className={`card ${className}`.trim()}>
+    <div ref={ref} {...props} className={`card ${className}`.trim()}>
       {children}
     </div>
   );
-}
+});

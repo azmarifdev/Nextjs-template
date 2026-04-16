@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 
-import { useToast } from "@/components/common/toast";
+import { useToast } from "@/components/ui/toast";
+import { Input } from "@/components/ui/input";
 import { demoTasks } from "@/modules/demo/sample-data";
+import { filterTasks, getTaskStats, updateTaskStatus } from "@/modules/task/service";
 import type { Task } from "@/modules/task/types";
 
 export function TaskList() {
@@ -13,36 +15,12 @@ export function TaskList() {
   const { showToast } = useToast();
 
   function onStatusChange(id: string, status: Task["status"]) {
-    setTasks((current) =>
-      current.map((task) => {
-        if (task.id !== id) {
-          return task;
-        }
-
-        return { ...task, status };
-      })
-    );
-
+    setTasks((current) => updateTaskStatus(current, id, status));
     showToast("Task status updated", "success");
   }
 
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
-      const matchQuery = [task.title, task.assignee].join(" ").toLowerCase().includes(query.toLowerCase());
-      const matchStatus = statusFilter === "all" ? true : task.status === statusFilter;
-      return matchQuery && matchStatus;
-    });
-  }, [tasks, query, statusFilter]);
-
-  const stats = useMemo(() => {
-    return {
-      total: tasks.length,
-      todo: tasks.filter((task) => task.status === "todo").length,
-      progress: tasks.filter((task) => task.status === "in-progress").length,
-      done: tasks.filter((task) => task.status === "done").length
-    };
-  }, [tasks]);
-
+  const filteredTasks = useMemo(() => filterTasks(tasks, query, statusFilter), [tasks, query, statusFilter]);
+  const stats = useMemo(() => getTaskStats(tasks), [tasks]);
   const hasFilters = query.trim().length > 0 || statusFilter !== "all";
 
   return (
@@ -72,8 +50,7 @@ export function TaskList() {
       </div>
 
       <div className="toolbar sm:grid-cols-2">
-        <input
-          className="input"
+        <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by task title or assignee"
@@ -88,7 +65,7 @@ export function TaskList() {
 
       {filteredTasks.length === 0 ? (
         <div className="list-row stack" style={{ textAlign: "center" }}>
-          <strong>No tasks yet</strong>
+          <strong>No data yet</strong>
           <p className="muted">Create tasks or clear filters to view data.</p>
           {hasFilters ? (
             <button type="button" className="btn secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>

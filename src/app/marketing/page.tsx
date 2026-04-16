@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { DemoBanner } from "@/components/common/demo-banner";
+import { DemoBanner } from "@/components/shared/demo-banner";
 import messages from "@/i18n/messages/en.json";
 
 export default function MarketingPage() {
@@ -51,8 +51,7 @@ export default function MarketingPage() {
       <div className="card">
         <h3>About</h3>
         <p className="muted">
-          Next.js Starter-Kit is crafted by A. Z. M. Arif to provide clean architecture with beginner-friendly,
-          production-like defaults.
+          Next.js Starter-Kit provides clean architecture with beginner-friendly and production-like defaults.
         </p>
       </div>
     </section>

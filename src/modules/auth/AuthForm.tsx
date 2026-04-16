@@ -4,63 +4,41 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 
-import { useToast } from "@/components/common/toast";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { apiPost } from "@/services/apiClient";
+import { login, register, validateAuthForm } from "@/modules/auth/service";
+import type { AuthErrors, AuthFormValues, AuthMode } from "@/modules/auth/types";
 
 type AuthFormProps = {
-  mode: "login" | "register";
+  mode: AuthMode;
   redirectTo?: string;
 };
-
-type AuthErrors = {
-  name?: string;
-  email?: string;
-  password?: string;
-  form?: string;
-};
-
-function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
 
 export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [values, setValues] = useState<AuthFormValues>({
+    name: "",
+    email: "",
+    password: ""
+  });
   const [errors, setErrors] = useState<AuthErrors>({});
   const [loading, setLoading] = useState(false);
 
   const isRegister = useMemo(() => mode === "register", [mode]);
 
-  function validate(): AuthErrors {
-    const nextErrors: AuthErrors = {};
-
-    if (isRegister && name.trim().length < 2) {
-      nextErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!isValidEmail(email.trim())) {
-      nextErrors.email = "Please enter a valid email address";
-    }
-
-    if (password.trim().length < 6) {
-      nextErrors.password = "Password must be at least 6 characters";
-    }
-
-    return nextErrors;
+  function setField<K extends keyof AuthFormValues>(key: K, value: AuthFormValues[K]) {
+    setValues((current) => ({ ...current, [key]: value }));
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrors({});
 
-    const validationErrors = validate();
+    const validationErrors = validateAuthForm(values, mode);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       showToast("Please fix form errors", "error");
@@ -71,10 +49,10 @@ export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
 
     try {
       if (mode === "login") {
-        await apiPost("/api/v1/auth/login", { email, password });
+        await login({ email: values.email, password: values.password });
         showToast("Login successful", "success");
       } else {
-        await apiPost("/api/v1/auth/register", { name, email, password });
+        await register(values);
         showToast("Registration successful", "success");
       }
 
@@ -91,16 +69,17 @@ export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
 
   return (
     <Card className="form">
-      <form onSubmit={onSubmit} className="form">
+      <form onSubmit={onSubmit} className="form" noValidate>
         <h1>{isRegister ? "Register" : "Login"}</h1>
 
         {isRegister ? (
           <>
             <Input
+              id="name"
               name="name"
               placeholder="Full name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
+              value={values.name}
+              onChange={(event) => setField("name", event.target.value)}
               error={errors.name}
               required
             />
@@ -113,8 +92,8 @@ export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
           name="email"
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          value={values.email}
+          onChange={(event) => setField("email", event.target.value)}
           error={errors.email}
           required
         />
@@ -125,8 +104,8 @@ export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
           name="password"
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          value={values.password}
+          onChange={(event) => setField("password", event.target.value)}
           error={errors.password}
           required
         />
@@ -139,7 +118,7 @@ export function AuthForm({ mode, redirectTo = "/dashboard" }: AuthFormProps) {
         </Button>
 
         <p>
-          {isRegister ? "Already have an account?" : "Need an account?"} {" "}
+          {isRegister ? "Already have an account?" : "Need an account?"}{" "}
           <Link href={isRegister ? "/login" : "/register"}>{isRegister ? "Login" : "Register"}</Link>
         </p>
       </form>

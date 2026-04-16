@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useToast } from "@/components/common/toast";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { apiPost } from "@/services/apiClient";
 

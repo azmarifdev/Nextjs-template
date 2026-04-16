@@ -5,7 +5,7 @@ export type ToastType = "success" | "error" | "info";
 export type ToastMessage = {
   id: string;
   type: ToastType;
-  message: string;
+  title: string;
 };
 
 export function Toaster({
@@ -22,7 +22,7 @@ export function Toaster({
           key={toast.id}
           type="button"
           onClick={() => onDismiss(toast.id)}
-          className="min-w-[220px] rounded-lg border px-3 py-2 text-left text-sm shadow-md"
+          className="min-w-[240px] rounded-xl border px-3 py-2 text-left text-sm shadow-md transition"
           style={{
             borderColor:
               toast.type === "success"
@@ -40,7 +40,7 @@ export function Toaster({
           }}
           aria-label="Dismiss notification"
         >
-          {toast.message}
+          {toast.title}
         </button>
       ))}
     </div>

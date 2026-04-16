@@ -2,8 +2,12 @@
 
 import { FormEvent, useMemo, useState } from "react";
 
-import { useToast } from "@/components/common/toast";
+import { useToast } from "@/components/ui/toast";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { demoProjects } from "@/modules/demo/sample-data";
+import { createProject, filterProjects, getProjectStats } from "@/modules/project/service";
 import type { Project } from "@/modules/project/types";
 
 export function ProjectList() {
@@ -25,12 +29,7 @@ export function ProjectList() {
       return;
     }
 
-    const nextProject: Project = {
-      id: `p_${crypto.randomUUID()}`,
-      name: trimmedName,
-      owner: trimmedOwner,
-      status: "planning"
-    };
+    const nextProject = createProject(trimmedName, trimmedOwner);
 
     setProjects((current) => [nextProject, ...current]);
     setName("");
@@ -42,23 +41,8 @@ export function ProjectList() {
     showToast("Project deleted", "info");
   }
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchQuery = [project.name, project.owner].join(" ").toLowerCase().includes(query.toLowerCase());
-      const matchStatus = statusFilter === "all" ? true : project.status === statusFilter;
-      return matchQuery && matchStatus;
-    });
-  }, [projects, query, statusFilter]);
-
-  const stats = useMemo(() => {
-    return {
-      total: projects.length,
-      active: projects.filter((project) => project.status === "active").length,
-      planning: projects.filter((project) => project.status === "planning").length,
-      showing: filteredProjects.length
-    };
-  }, [projects, filteredProjects]);
-
+  const filteredProjects = useMemo(() => filterProjects(projects, query, statusFilter), [projects, query, statusFilter]);
+  const stats = useMemo(() => getProjectStats(projects, filteredProjects.length), [projects, filteredProjects.length]);
   const hasFilters = query.trim().length > 0 || statusFilter !== "all";
 
   return (
@@ -88,28 +72,15 @@ export function ProjectList() {
       </div>
 
       <form onSubmit={onCreate} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-        <input
-          className="input"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Project name"
-          required
-        />
-        <input
-          className="input"
-          value={owner}
-          onChange={(event) => setOwner(event.target.value)}
-          placeholder="Owner"
-          required
-        />
-        <button className="btn sm:min-w-[92px]" type="submit">
+        <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Project name" required />
+        <Input value={owner} onChange={(event) => setOwner(event.target.value)} placeholder="Owner" required />
+        <Button className="sm:min-w-[92px]" type="submit">
           Add
-        </button>
+        </Button>
       </form>
 
       <div className="toolbar sm:grid-cols-2">
-        <input
-          className="input"
+        <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by project or owner"
@@ -123,12 +94,12 @@ export function ProjectList() {
 
       {filteredProjects.length === 0 ? (
         <div className="list-row stack" style={{ textAlign: "center" }}>
-          <strong>No projects yet</strong>
+          <strong>No data yet</strong>
           <p className="muted">Create your first project or clear filters.</p>
           {hasFilters ? (
-            <button type="button" className="btn secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>
+            <Button type="button" variant="secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>
               Clear filters
-            </button>
+            </Button>
           ) : null}
         </div>
       ) : (
@@ -141,10 +112,10 @@ export function ProjectList() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="badge">{project.status}</span>
-                <button className="btn danger" onClick={() => onDelete(project.id)} type="button">
+                <Badge>{project.status}</Badge>
+                <Button variant="danger" onClick={() => onDelete(project.id)} type="button">
                   Delete
-                </button>
+                </Button>
               </div>
             </li>
           ))}
